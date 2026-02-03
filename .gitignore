@@ -29,3 +29,23 @@ mlruns
 
 # Challengify - test challengification files
 *_challengify*
+
+# --- EKLENENLER ---
+
+# Models & Weights
+*.h5
+*.keras
+*.joblib
+*.pkl
+*.hdf5
+
+# Python Build Parts
+build/
+dist/
+
+# Local Data Directories (CSV disinda formatlar icin de koruma)
+data/
+raw_data/
+
+# Test generated files
+test_output.txt

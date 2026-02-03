@@ -18,13 +18,89 @@ def preprocess_features(X: pd.DataFrame) -> np.ndarray:
 
         Stateless operation: "fit_transform()" equals "transform()".
         """
+        
+        # 1. PASSENGER PIPE
+        p_min = 1
+        p_max = 8
+        passenger_pipe = FunctionTransformer(lambda p: (p - p_min) / (p_max - p_min))
 
-        pass  # YOUR CODE HERE
+        # 2. DISTANCE PIPE
+        dist_min = 0
+        dist_max = 100
+        
+        lonlat_features = [
+            "pickup_latitude", "pickup_longitude", "dropoff_latitude",
+            "dropoff_longitude"
+        ]
+
+        distance_pipe = make_pipeline(
+            FunctionTransformer(transform_lonlat_features),
+            FunctionTransformer(lambda dist: (dist - dist_min) / (dist_max - dist_min))
+        )
+
+        # 3. TIME PIPE
+        timedelta_min = 0
+        timedelta_max = 2090
+
+        time_categories = [
+            np.arange(0, 7, 1),  # days of the week
+            np.arange(1, 13, 1)  # months of the year
+        ]
+
+        time_pipe = make_pipeline(
+            FunctionTransformer(transform_time_features),
+            make_column_transformer(
+                (OneHotEncoder(
+                    categories=time_categories,
+                    sparse_output=False,
+                    handle_unknown="ignore"
+                ), [2, 3]), # encoders.py çıktısındaki sütunlar: 2=dow, 3=month
+
+                (FunctionTransformer(lambda year: (year - timedelta_min) / (timedelta_max - timedelta_min)), [4]), # 4=timedelta
+                remainder="passthrough" # 0=hour_sin, 1=hour_cos
+            )
+        )
+
+        # 4. GEOHASH PIPE
+        # En sık görülen 20 bölge (Precision 5)
+        most_important_geohash_districts = [
+            "dr5ru", "dr5rs", "dr5rv", "dr72h", "dr72j", "dr5re", "dr5rk",
+            "dr5rz", "dr5ry", "dr5rt", "dr5rg", "dr5x1", "dr5x0", "dr72m",
+            "dr5rm", "dr5rx", "dr5x2", "dr5rw", "dr5rh", "dr5x8"
+        ]
+
+        geohash_categories = [
+            most_important_geohash_districts,  # pickup district list
+            most_important_geohash_districts   # dropoff district list
+        ]
+
+        geohash_pipe = make_pipeline(
+            FunctionTransformer(compute_geohash),
+            OneHotEncoder(
+                categories=geohash_categories,
+                handle_unknown="ignore",
+                sparse_output=False
+            )
+        )
+
+        # COMBINED PREPROCESSOR
+        final_preprocessor = ColumnTransformer(
+            [
+                ("passenger_scaler", passenger_pipe, ["passenger_count"]),
+                ("time_preproc", time_pipe, ["pickup_datetime"]),
+                ("dist_preproc", distance_pipe, lonlat_features),
+                ("geohash", geohash_pipe, lonlat_features),
+            ],
+            n_jobs=-1,
+        )
+
         return final_preprocessor
 
     print(Fore.BLUE + "\nPreprocessing features..." + Style.RESET_ALL)
 
     preprocessor = create_sklearn_preprocessor()
+    
+    # Preprocessor stateless olduğu için (parametre öğrenmediği için) fit_transform yeterlidir.
     X_processed = preprocessor.fit_transform(X)
 
     print("✅ X_processed, with shape", X_processed.shape)
