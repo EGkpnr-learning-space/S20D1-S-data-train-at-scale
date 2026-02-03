@@ -8,35 +8,16 @@ collecting ... collected 8 items
 tests/train_at_scale/test_clean.py::test_clean_data PASSED               [ 12%]
 tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_preprocess_and_train PASSED [ 25%]
 tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_pred PASSED [ 37%]
-tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_preprocess FAILED [ 50%]
+tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_preprocess PASSED [ 50%]
 tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_train FAILED [ 62%]
 tests/train_at_scale/test_model.py::test_model_can_fit PASSED            [ 75%]
 tests/train_at_scale/test_notebook.py::TestNotebook::test_y_pred PASSED  [ 87%]
 tests/train_at_scale/test_processor_pipeline.py::test_preprocess_features PASSED [100%]
 
 =================================== FAILURES ===================================
-_____________________ TestMainLocal.test_route_preprocess ______________________
-
-self = <tests.train_at_scale.test_main_local.TestMainLocal object at 0x7d1b2ef7b2e0>
-fixture_query_1k =      fare_amount           pickup_datetime  ...  dropoff_latitude  passenger_count
-0            8.9 2009-01-15 09:22:3...           4
-454          8.5 2014-12-27 16:47:42+00:00  ...         40.771263                4
-
-[455 rows x 7 columns]
-fixture_processed_1k =            0    1    2    3    4    5   ...   60   61   62   63   64         65
-0    0.000000  0.0  0.0  0.0  1.0  0.0...0.0   6.500000
-446  0.428571  0.0  0.0  0.0  0.0  0.0  ...  0.0  0.0  0.0  0.0  0.0   8.500000
-
-[447 rows x 66 columns]
-
-    def test_route_preprocess(self, fixture_query_1k: pd.DataFrame, fixture_processed_1k: pd.DataFrame):
->       from taxifare.interface.main_local import preprocess
-E       ImportError: cannot import name 'preprocess' from 'taxifare.interface.main_local' (/home/egkpnr/code/EGkpnr/S20D1-S-/S20D1-S-data-train-at-scale/taxifare/interface/main_local.py)
-
-tests/train_at_scale/test_main_local.py:67: ImportError
 ________________________ TestMainLocal.test_route_train ________________________
 
-self = <tests.train_at_scale.test_main_local.TestMainLocal object at 0x7d1b2ef7af50>
+self = <tests.train_at_scale.test_main_local.TestMainLocal object at 0x7545f52aafe0>
 
     def test_route_train(self):
     
@@ -58,8 +39,7 @@ tests/train_at_scale/test_main_local.py:126: ImportError
 ----------------------------- Captured stderr call -----------------------------
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  153k  100  153k    0     0   399k      0 --:--:-- --:--:-- --:--:--  399k
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  153k  100  153k    0     0   416k      0 --:--:-- --:--:-- --:--:--  416k
 =========================== short test summary info ============================
-FAILED tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_preprocess
 FAILED tests/train_at_scale/test_main_local.py::TestMainLocal::test_route_train
-================== 2 failed, 6 passed, 12 warnings in 10.06s ===================
+================== 1 failed, 7 passed, 12 warnings in 11.90s ===================
